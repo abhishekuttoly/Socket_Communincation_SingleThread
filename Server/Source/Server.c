@@ -155,6 +155,7 @@ eReadError SocketRead(uint8_t ucNewSocket)
         LOGGER(LOG_LEVEL_INFO, __FILE_NAME__, __LINE__, "Data received");
         printf("%s\n", ucBuffer);
         eError = ParseStringAndCalculate(ucBuffer, &ucResult);
+
         if(eError == MATH_OVERFLOW)
         {
             valread = send(ucNewSocket, ucOverFlowErrorMessage, sizeof(ucOverFlowErrorMessage), 0);
@@ -180,7 +181,6 @@ eReadError SocketRead(uint8_t ucNewSocket)
     else if(valread == 0)
     {
         LOGGER(LOG_LEVEL_WARNING, __FILE_NAME__, __LINE__, "Client disconnected");
-        // ServerListen(ucNewSocket, 1);
         return READ_CLIENT_DISCONNECTED;
     }
     else

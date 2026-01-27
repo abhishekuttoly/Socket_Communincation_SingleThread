@@ -58,7 +58,7 @@ eMathError ParseStringAndCalculate(uint8_t ucBuffer[], uint32_t *ulFinalResult)
     }
     ucCorrectExpr[ucCorrectExprIndex] = '\0';
     
-    // Parse first number
+    // Parsing first number
     while (ucCorrectExpr[ucIndex] >= '0' && ucCorrectExpr[ucIndex] <= '9') {
         if(unNumber > UINT32_MAX/10)
         {
@@ -71,7 +71,6 @@ eMathError ParseStringAndCalculate(uint8_t ucBuffer[], uint32_t *ulFinalResult)
     }
     ulResult = unNumber;
     
-    // Parse operators and numbers
     while (ucCorrectExpr[ucIndex] != '\0') {
         // Get operator
         operator = ucCorrectExpr[ucIndex];

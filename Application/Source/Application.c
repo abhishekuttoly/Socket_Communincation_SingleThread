@@ -38,6 +38,7 @@ void *ApplicationServerThread(void *arg)
     uint8_t ucOpt = 1;
     socklen_t addrlen = sizeof(address);
     char buffer[1024] = { 0 };
+    eReadError eReadErrorCode = 0;
 
     // Creating socket file descriptor
     if(!ServerCreateSocket(&ucSocketFD))
@@ -72,7 +73,7 @@ void *ApplicationServerThread(void *arg)
     {
         exit(EXIT_FAILURE);
     }
-    eReadError eReadErrorCode = 0;
+    
     while(1){
         eReadErrorCode = SocketRead(ucNewSocket);
         if(eReadErrorCode != READ_OK)
