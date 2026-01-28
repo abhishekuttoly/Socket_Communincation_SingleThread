@@ -35,12 +35,21 @@
 typedef enum _eMathError{
     MATH_OK = 0,
     MATH_OVERFLOW,
-    MATH_DIVISION_BY_ZERO
+    MATH_DIVISION_BY_ZERO,
+    MATH_INVALID_OPERATOR
 } eMathError;
+
+typedef struct _sExpression
+{
+    int32_t lOperandOne;
+    int32_t lOperandTwo;
+    char ucOperator;
+}sExpression;
 //**************************** Forward Declarations ***************************
 
 //***************************** Function Declaration **************************
-eMathError ParseStringAndCalculate(uint8_t ucBuffer[], uint32_t *ulFinalResult);
+eMathError ParseStringAndCalculate(uint8_t ucBuffer[], int32_t *lFinalResult);
+eMathError ParseCalculateData(struct _sExpression sExpressionData, int32_t *lCalculatedResult);
 //*********************** Inline Method Implementations ***********************
 
 #endif /* //*********************** Inline Method Implementations ***********************

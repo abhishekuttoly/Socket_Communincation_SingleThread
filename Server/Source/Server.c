@@ -142,19 +142,31 @@ eReadError SocketRead(uint8_t ucNewSocket)
 {
     ssize_t valread;
     uint8_t ucBuffer[1024] = { 0 };
-    uint32_t ucResult = 0;
-    uint32_t ucTransmit[20];
+    struct _sExpression sExpressionData = {0};
+    int32_t lResult = 0;
+    uint8_t ucTransmit[20];
+    uint32_t ulSizeOfBuffer = 0;
     eMathError eError = MATH_OK;
     uint8_t ucOverFlowErrorMessage[] = "Overflow error";
     uint8_t ucDivideByZeroErrorMessage[] = "Division by zero";
-    valread = read(ucNewSocket, ucBuffer,
-                   1024 - 1);
+    uint8_t ucInvalidOperatorErrorMessage[] = "Invalid operator";
+
+    valread = read(ucNewSocket, &sExpressionData, sizeof(sExpressionData));
+    sExpressionData.lOperandOne = ntohl(sExpressionData.lOperandOne);
+    sExpressionData.lOperandTwo = ntohl(sExpressionData.lOperandTwo);
     
     if(valread > 0)
     {
         LOGGER(LOG_LEVEL_INFO, __FILE_NAME__, __LINE__, "Data received");
-        printf("%s\n", ucBuffer);
-        eError = ParseStringAndCalculate(ucBuffer, &ucResult);
+        if(sExpressionData.ucOperator == 'x' || sExpressionData.ucOperator == 'X')
+        {
+            eError = ParseConvertToHex(sExpressionData,&ucTransmit, &ulSizeOfBuffer);
+            SocketWrite(ucNewSocket, ucTransmit, sizeof(ucTransmit));
+        }
+        else
+        {
+            eError = ParseCalculateData(sExpressionData,&lResult);
+        }
 
         if(eError == MATH_OVERFLOW)
         {
@@ -172,9 +184,17 @@ eReadError SocketRead(uint8_t ucNewSocket)
                 LOGGER(LOG_LEVEL_INFO, __FILE_NAME__, __LINE__, "Data transmitted");
             }
         }
+        else if(eError == MATH_INVALID_OPERATOR)
+        {
+            valread = send(ucNewSocket, ucInvalidOperatorErrorMessage, sizeof(ucInvalidOperatorErrorMessage), 0);
+            if(valread > 0)
+            {
+                LOGGER(LOG_LEVEL_INFO, __FILE_NAME__, __LINE__, "Data transmitted");
+            }
+        }
         else
         {
-            snprintf(ucTransmit, sizeof(ucTransmit), "%d", ucResult);
+            snprintf(ucTransmit, sizeof(ucTransmit), "%u", lResult);
             SocketWrite(ucNewSocket, ucTransmit, sizeof(ucTransmit));
         }
     }
