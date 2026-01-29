@@ -42,14 +42,15 @@ typedef enum _eMathError{
 typedef struct _sExpression
 {
     int32_t lOperandOne;
+    uint8_t ucOperator;
     int32_t lOperandTwo;
-    char ucOperator;
-}sExpression;
+}__attribute__((packed)) sExpression;
 //**************************** Forward Declarations ***************************
 
 //***************************** Function Declaration **************************
 eMathError ParseStringAndCalculate(uint8_t ucBuffer[], int32_t *lFinalResult);
 eMathError ParseCalculateData(struct _sExpression sExpressionData, int32_t *lCalculatedResult);
+eMathError ParseConvertToHex(struct _sExpression sExpressionData, uint8_t ucBuffer[], uint32_t *ulSizeOfBuffer);
 //*********************** Inline Method Implementations ***********************
 
 #endif /* //*********************** Inline Method Implementations ***********************

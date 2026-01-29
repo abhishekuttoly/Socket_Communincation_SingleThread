@@ -175,7 +175,7 @@ eMathError ParseStringAndCalculate(uint8_t ucBuffer[], int32_t *lFinalResult) //
 
 eMathError ParseCalculateData(struct _sExpression sExpressionData, int32_t *lCalculatedResult)
 {
-    uint32_t lResult = 0;
+    int32_t lResult = 0;
     eMathError eError = MATH_OK;
 
     if ((sExpressionData.ucOperator == '+' || sExpressionData.ucOperator == '-' ||
@@ -191,25 +191,25 @@ eMathError ParseCalculateData(struct _sExpression sExpressionData, int32_t *lCal
         switch (sExpressionData.ucOperator)
         {
         case '+':
-            if (sExpressionData.lOperandOne > INT32_MAX - sExpressionData.lOperandTwo)
-            {
-                LOGGER(LOG_LEVEL_WARNING, __FILE_NAME__, __LINE__, "Overflow occured");
-                eError = MATH_OVERFLOW;
-            }
-            else
-            {
+            // if (sExpressionData.lOperandOne > INT32_MAX - sExpressionData.lOperandTwo)
+            // {
+            //     LOGGER(LOG_LEVEL_WARNING, __FILE_NAME__, __LINE__, "Overflow occured");
+            //     eError = MATH_OVERFLOW;
+            // }
+            // else
+            // {
                 lResult = sExpressionData.lOperandOne + sExpressionData.lOperandTwo;
-            }
+            // }
             break;
         case '-':
             lResult = sExpressionData.lOperandOne - sExpressionData.lOperandTwo;
             break;
         case '*':
-            if (sExpressionData.lOperandTwo != 0 && lResult > INT32_MAX / sExpressionData.lOperandTwo)
-            {
-                LOGGER(LOG_LEVEL_WARNING, __FILE_NAME__, __LINE__, "Overflow occured");
-                eError = MATH_OVERFLOW;
-            }
+            // if (sExpressionData.lOperandTwo != 0 && lResult > INT32_MAX / sExpressionData.lOperandTwo)
+            // {
+            //     LOGGER(LOG_LEVEL_WARNING, __FILE_NAME__, __LINE__, "Overflow occured");
+            //     eError = MATH_OVERFLOW;
+            // }
             lResult = sExpressionData.lOperandOne * sExpressionData.lOperandTwo;
             break;
         case '/':
@@ -262,18 +262,18 @@ eMathError ParseCalculateData(struct _sExpression sExpressionData, int32_t *lCal
             break;
         case 'B':
         case 'b':
-            uint8_t ucBinaryNumber[10];
-            uint8_t ucArrayIndex= 0;
-            int ucLoopIndex = 0;
+            uint8_t ucBinaryNumberb[10];
+            uint8_t ucArrayIndexb= 0;
+            int ucLoopIndexb = 0;
             while(sExpressionData.lOperandOne > 0)
             {
-                ucBinaryNumber[ucArrayIndex] = sExpressionData.lOperandOne % 2;
+                ucBinaryNumberb[ucArrayIndexb] = sExpressionData.lOperandOne % 2;
                 sExpressionData.lOperandOne /= 2;
-                ucArrayIndex++;
+                ucArrayIndexb++;
             }
-            for(ucLoopIndex = ucArrayIndex - 1; ucLoopIndex >=0; ucLoopIndex--)
+            for(ucLoopIndexb = ucArrayIndexb - 1; ucLoopIndexb >=0; ucLoopIndexb--)
             {
-                lResult = (lResult * 10) + ucBinaryNumber[ucLoopIndex];
+                lResult = (lResult * 10) + ucBinaryNumberb[ucLoopIndexb];
             }
             break;
         default:
@@ -294,7 +294,9 @@ eMathError ParseCalculateData(struct _sExpression sExpressionData, int32_t *lCal
 eMathError ParseConvertToHex(struct _sExpression sExpressionData, uint8_t ucBuffer[], uint32_t *ulSizeOfBuffer)
 {
     uint8_t ucHexNumber[10];
-    uint8_t ucArrayIndex, ucTemp, ucBufferIndex = 0;
+    uint8_t ucArrayIndex = 0;
+    uint8_t ucTemp = 0;
+    uint8_t ucBufferIndex = 0;
     int ucLoopIndex = 0;
     while (sExpressionData.lOperandOne != 0)
     {
@@ -312,7 +314,6 @@ eMathError ParseConvertToHex(struct _sExpression sExpressionData, uint8_t ucBuff
     }
 
     *ulSizeOfBuffer = ucArrayIndex;
-    
     printf("Hexadecimal value is: 0X");
     for (ucLoopIndex = ucArrayIndex - 1; ucLoopIndex >= 0; ucLoopIndex--)
     {
@@ -321,5 +322,5 @@ eMathError ParseConvertToHex(struct _sExpression sExpressionData, uint8_t ucBuff
         ucBufferIndex++;
     }
 
-    printf("\n");
+    return MATH_OK;
 }

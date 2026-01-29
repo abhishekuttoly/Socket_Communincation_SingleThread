@@ -26,14 +26,15 @@
 
 //***************************** Function Definitions ******************************
 //******************************.FUNCTION_HEADER.******************************
-//Purpose : To create socket
-//Inputs  : ucServerFD - server file descriptor
-//Outputs : None
-//Return  : true if success, else false
+// Purpose : To create socket
+// Inputs  : ucServerFD - server file descriptor
+// Outputs : None
+// Return  : true if success, else false
 //**********************************************************************************
 bool ServerCreateSocket(uint8_t *ucServerFD)
 {
-    if ((*ucServerFD = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+    if ((*ucServerFD = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+    {
         LOGGER(LOG_LEVEL_ERROR, __FILE_NAME__, __LINE__, "Failed to create socket");
         return false;
     }
@@ -43,16 +44,17 @@ bool ServerCreateSocket(uint8_t *ucServerFD)
 }
 
 //******************************.FUNCTION_HEADER.******************************
-//Purpose : To attach socket
-//Inputs  : ucServerFD - server file descriptor
-//Outputs : ucOpt -  type of data pointed to by optval
-//Return  : true if success, else false
+// Purpose : To attach socket
+// Inputs  : ucServerFD - server file descriptor
+// Outputs : ucOpt -  type of data pointed to by optval
+// Return  : true if success, else false
 //**********************************************************************************
 bool ServerAttachSocket(uint8_t ucServerFD, uint8_t *ucOpt)
 {
     if (setsockopt(ucServerFD, SOL_SOCKET,
-                   SO_REUSEADDR , &ucOpt,
-                   sizeof(ucOpt))) {
+                   SO_REUSEADDR, &ucOpt,
+                   sizeof(ucOpt)))
+    {
         LOGGER(LOG_LEVEL_ERROR, __FILE_NAME__, __LINE__, "Failed to attach socket");
         return false;
     }
@@ -62,10 +64,10 @@ bool ServerAttachSocket(uint8_t ucServerFD, uint8_t *ucOpt)
 }
 
 //******************************.FUNCTION_HEADER.******************************
-//Purpose : To Bind socket to ip and port
-//Inputs  : ucServerFD - server file descriptor
-//Outputs : None
-//Return  : true if success, else false
+// Purpose : To Bind socket to ip and port
+// Inputs  : ucServerFD - server file descriptor
+// Outputs : None
+// Return  : true if success, else false
 //**********************************************************************************
 bool ServerBind(uint8_t ucServerFD)
 {
@@ -74,9 +76,9 @@ bool ServerBind(uint8_t ucServerFD)
     sAddress.sin_addr.s_addr = INADDR_ANY;
     sAddress.sin_port = htons(PORT);
 
-    if (bind(ucServerFD, (struct sockaddr*)&sAddress,
-             sizeof(sAddress))
-        < 0) {
+    if (bind(ucServerFD, (struct sockaddr *)&sAddress,
+             sizeof(sAddress)) < 0)
+    {
         LOGGER(LOG_LEVEL_ERROR, __FILE_NAME__, __LINE__, "Failed to Bind socket");
         return false;
     }
@@ -86,15 +88,16 @@ bool ServerBind(uint8_t ucServerFD)
 }
 
 //******************************.FUNCTION_HEADER.******************************
-//Purpose : To listen to cleint
-//Inputs  : ucServerFD - server file descriptor
-//Inputs  : ucNumberOfConnection - Number of connection allowed
-//Outputs : None
-//Return  : True if success, else false
+// Purpose : To listen to cleint
+// Inputs  : ucServerFD - server file descriptor
+// Inputs  : ucNumberOfConnection - Number of connection allowed
+// Outputs : None
+// Return  : True if success, else false
 //**********************************************************************************
 bool ServerListen(uint8_t ucServerFD, uint8_t ucNumberOfConnection)
 {
-    if (listen(ucServerFD, ucNumberOfConnection) < 0) {
+    if (listen(ucServerFD, ucNumberOfConnection) < 0)
+    {
         LOGGER(LOG_LEVEL_ERROR, __FILE_NAME__, __LINE__, "Failed to listen");
         return false;
     }
@@ -104,17 +107,17 @@ bool ServerListen(uint8_t ucServerFD, uint8_t ucNumberOfConnection)
 }
 
 //******************************.FUNCTION_HEADER.******************************
-//Purpose : To accept client connection
-//Inputs  : ucServerFD - server file descriptor
-//Outputs : ucNewSocket - New socket file descriptor
-//Return  : True if success, else false
+// Purpose : To accept client connection
+// Inputs  : ucServerFD - server file descriptor
+// Outputs : ucNewSocket - New socket file descriptor
+// Return  : True if success, else false
 //**********************************************************************************
-bool ServerAccept(uint8_t ucServerFD,uint8_t *ucNewSocket)
+bool ServerAccept(uint8_t ucServerFD, uint8_t *ucNewSocket)
 {
     struct sockaddr_in sAddress;
     socklen_t addrlen = sizeof(sAddress);
     int new_socket = 0;
-    if ((*ucNewSocket = accept(ucServerFD, (struct sockaddr*)&sAddress, &addrlen)) < 0)
+    if ((*ucNewSocket = accept(ucServerFD, (struct sockaddr *)&sAddress, &addrlen)) < 0)
     {
         LOGGER(LOG_LEVEL_ERROR, __FILE_NAME__, __LINE__, "Failed to Accept client");
         return false;
@@ -122,7 +125,7 @@ bool ServerAccept(uint8_t ucServerFD,uint8_t *ucNewSocket)
     LOGGER(LOG_LEVEL_INFO, __FILE_NAME__, __LINE__, "Client accepted");
 
     socklen_t addr_len = sizeof(sAddress);
-    getpeername(ucServerFD, (struct sockaddr*)&sAddress, &addr_len);
+    getpeername(ucServerFD, (struct sockaddr *)&sAddress, &addr_len);
 
     char *ip = inet_ntoa(sAddress.sin_addr);
     int port = ntohs(sAddress.sin_port);
@@ -133,15 +136,15 @@ bool ServerAccept(uint8_t ucServerFD,uint8_t *ucNewSocket)
 }
 
 //******************************.FUNCTION_HEADER.******************************
-//Purpose : To read data from socket
-//Inputs  : ucNewSocket - socket file descriptor
-//Outputs : None
-//Return  : None
+// Purpose : To read data from socket
+// Inputs  : ucNewSocket - socket file descriptor
+// Outputs : None
+// Return  : None
 //**********************************************************************************
 eReadError SocketRead(uint8_t ucNewSocket)
 {
     ssize_t valread;
-    uint8_t ucBuffer[1024] = { 0 };
+    uint8_t ucBuffer[1024] = {0};
     struct _sExpression sExpressionData = {0};
     int32_t lResult = 0;
     uint8_t ucTransmit[20];
@@ -154,51 +157,51 @@ eReadError SocketRead(uint8_t ucNewSocket)
     valread = read(ucNewSocket, &sExpressionData, sizeof(sExpressionData));
     sExpressionData.lOperandOne = ntohl(sExpressionData.lOperandOne);
     sExpressionData.lOperandTwo = ntohl(sExpressionData.lOperandTwo);
-    
-    if(valread > 0)
+
+    if (valread > 0)
     {
         LOGGER(LOG_LEVEL_INFO, __FILE_NAME__, __LINE__, "Data received");
-        if(sExpressionData.ucOperator == 'x' || sExpressionData.ucOperator == 'X')
+        if (sExpressionData.ucOperator == 'x')
         {
-            eError = ParseConvertToHex(sExpressionData,&ucTransmit, &ulSizeOfBuffer);
-            SocketWrite(ucNewSocket, ucTransmit, sizeof(ucTransmit));
+            eError = ParseConvertToHex(sExpressionData, ucTransmit, &ulSizeOfBuffer);
+            ucTransmit[ulSizeOfBuffer] = '\0';
+            SocketWrite(ucNewSocket, ucTransmit, ulSizeOfBuffer);
         }
         else
         {
-            eError = ParseCalculateData(sExpressionData,&lResult);
-        }
-
-        if(eError == MATH_OVERFLOW)
-        {
-            valread = send(ucNewSocket, ucOverFlowErrorMessage, sizeof(ucOverFlowErrorMessage), 0);
-            if(valread > 0)
+            eError = ParseCalculateData(sExpressionData, &lResult);
+            if (eError == MATH_OVERFLOW)
             {
-                LOGGER(LOG_LEVEL_INFO, __FILE_NAME__, __LINE__, "Data transmitted");
+                valread = send(ucNewSocket, ucOverFlowErrorMessage, sizeof(ucOverFlowErrorMessage), 0);
+                if (valread > 0)
+                {
+                    LOGGER(LOG_LEVEL_INFO, __FILE_NAME__, __LINE__, "Data transmitted");
+                }
             }
-        }
-        else if(eError == MATH_DIVISION_BY_ZERO)
-        {
-            valread = send(ucNewSocket, ucDivideByZeroErrorMessage, sizeof(ucDivideByZeroErrorMessage), 0);
-            if(valread > 0)
+            else if (eError == MATH_DIVISION_BY_ZERO)
             {
-                LOGGER(LOG_LEVEL_INFO, __FILE_NAME__, __LINE__, "Data transmitted");
+                valread = send(ucNewSocket, ucDivideByZeroErrorMessage, sizeof(ucDivideByZeroErrorMessage), 0);
+                if (valread > 0)
+                {
+                    LOGGER(LOG_LEVEL_INFO, __FILE_NAME__, __LINE__, "Data transmitted");
+                }
             }
-        }
-        else if(eError == MATH_INVALID_OPERATOR)
-        {
-            valread = send(ucNewSocket, ucInvalidOperatorErrorMessage, sizeof(ucInvalidOperatorErrorMessage), 0);
-            if(valread > 0)
+            else if (eError == MATH_INVALID_OPERATOR)
             {
-                LOGGER(LOG_LEVEL_INFO, __FILE_NAME__, __LINE__, "Data transmitted");
+                valread = send(ucNewSocket, ucInvalidOperatorErrorMessage, sizeof(ucInvalidOperatorErrorMessage), 0);
+                if (valread > 0)
+                {
+                    LOGGER(LOG_LEVEL_INFO, __FILE_NAME__, __LINE__, "Data transmitted");
+                }
             }
-        }
-        else
-        {
-            snprintf(ucTransmit, sizeof(ucTransmit), "%u", lResult);
-            SocketWrite(ucNewSocket, ucTransmit, sizeof(ucTransmit));
+            else
+            {
+                snprintf(ucTransmit, sizeof(ucTransmit), "%d", lResult);
+                SocketWrite(ucNewSocket, ucTransmit, sizeof(ucTransmit));
+            }
         }
     }
-    else if(valread == 0)
+    else if (valread == 0)
     {
         LOGGER(LOG_LEVEL_WARNING, __FILE_NAME__, __LINE__, "Client disconnected");
         return READ_CLIENT_DISCONNECTED;
@@ -212,22 +215,22 @@ eReadError SocketRead(uint8_t ucNewSocket)
 }
 
 //******************************.FUNCTION_HEADER.******************************
-//Purpose : To write/transmit data
-//Inputs  : ucNewSocket - new socket file descriptor
-//Inputs  : ucTransmitBuffer - Buffer to transmit
-//Inputs  : ucSizeOfBuffer - Size of buffer to transmit
-//Outputs : None
-//Return  : Void
+// Purpose : To write/transmit data
+// Inputs  : ucNewSocket - new socket file descriptor
+// Inputs  : ucTransmitBuffer - Buffer to transmit
+// Inputs  : ucSizeOfBuffer - Size of buffer to transmit
+// Outputs : None
+// Return  : Void
 //**********************************************************************************
 void SocketWrite(uint8_t ucNewSocket, uint8_t ucTransmitBuffer[], uint8_t ucSizeOfBuffer)
 {
     ssize_t valread;
     valread = send(ucNewSocket, ucTransmitBuffer, ucSizeOfBuffer, 0);
-    if(valread > 0)
+    if (valread > 0)
     {
         LOGGER(LOG_LEVEL_INFO, __FILE_NAME__, __LINE__, "Data transmitted");
     }
-    else if(valread == 0)
+    else if (valread == 0)
     {
         LOGGER(LOG_LEVEL_WARNING, __FILE_NAME__, __LINE__, "Client disconnected");
     }
@@ -238,10 +241,10 @@ void SocketWrite(uint8_t ucNewSocket, uint8_t ucTransmitBuffer[], uint8_t ucSize
 }
 
 //******************************.FUNCTION_HEADER.******************************
-//Purpose : To close socket connection
-//Inputs  : ucSocketFD - File descriptor
-//Outputs : None
-//Return  : Void 
+// Purpose : To close socket connection
+// Inputs  : ucSocketFD - File descriptor
+// Outputs : None
+// Return  : Void
 //**********************************************************************************
 void SocketClose(uint8_t ucSocketFD)
 {
