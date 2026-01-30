@@ -196,7 +196,14 @@ eReadError SocketRead(uint8_t ucNewSocket)
             }
             else
             {
-                snprintf(ucTransmit, sizeof(ucTransmit), "%d", lResult);
+                if(sExpressionData.ucOperator == 'r')
+                {
+                    snprintf(ucTransmit, sizeof(ucTransmit), "%u", lResult);
+                }
+                else
+                {
+                    snprintf(ucTransmit, sizeof(ucTransmit), "%d", lResult);
+                }
                 SocketWrite(ucNewSocket, ucTransmit, sizeof(ucTransmit));
             }
         }

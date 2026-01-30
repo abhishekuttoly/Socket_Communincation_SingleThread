@@ -184,32 +184,19 @@ eMathError ParseCalculateData(struct _sExpression sExpressionData, int32_t *lCal
          sExpressionData.ucOperator == '<' || sExpressionData.ucOperator == '&' ||
          sExpressionData.ucOperator == '|' || sExpressionData.ucOperator == '^' ||
          sExpressionData.ucOperator == '~' || sExpressionData.ucOperator == '$' ||
-         sExpressionData.ucOperator == '#' || sExpressionData.ucOperator == 'X' ||
+         sExpressionData.ucOperator == '#' || sExpressionData.ucOperator == 'r' ||
          sExpressionData.ucOperator == 'B' || sExpressionData.ucOperator == 'x' ||
          sExpressionData.ucOperator == 'b'))
     {
         switch (sExpressionData.ucOperator)
         {
         case '+':
-            // if (sExpressionData.lOperandOne > INT32_MAX - sExpressionData.lOperandTwo)
-            // {
-            //     LOGGER(LOG_LEVEL_WARNING, __FILE_NAME__, __LINE__, "Overflow occured");
-            //     eError = MATH_OVERFLOW;
-            // }
-            // else
-            // {
-                lResult = sExpressionData.lOperandOne + sExpressionData.lOperandTwo;
-            // }
+            lResult = sExpressionData.lOperandOne + sExpressionData.lOperandTwo;
             break;
         case '-':
             lResult = sExpressionData.lOperandOne - sExpressionData.lOperandTwo;
             break;
         case '*':
-            // if (sExpressionData.lOperandTwo != 0 && lResult > INT32_MAX / sExpressionData.lOperandTwo)
-            // {
-            //     LOGGER(LOG_LEVEL_WARNING, __FILE_NAME__, __LINE__, "Overflow occured");
-            //     eError = MATH_OVERFLOW;
-            // }
             lResult = sExpressionData.lOperandOne * sExpressionData.lOperandTwo;
             break;
         case '/':
@@ -262,18 +249,28 @@ eMathError ParseCalculateData(struct _sExpression sExpressionData, int32_t *lCal
             break;
         case 'B':
         case 'b':
-            uint8_t ucBinaryNumberb[10];
-            uint8_t ucArrayIndexb= 0;
-            int ucLoopIndexb = 0;
+            uint8_t ucBinaryNumber[20];
+            uint8_t ucArrayIndex= 0;
+            int ucLoopIndex = 0;
             while(sExpressionData.lOperandOne > 0)
             {
-                ucBinaryNumberb[ucArrayIndexb] = sExpressionData.lOperandOne % 2;
+                ucBinaryNumber[ucArrayIndex] = sExpressionData.lOperandOne % 2;
                 sExpressionData.lOperandOne /= 2;
-                ucArrayIndexb++;
+                ucArrayIndex++;
             }
-            for(ucLoopIndexb = ucArrayIndexb - 1; ucLoopIndexb >=0; ucLoopIndexb--)
+            for(ucLoopIndex = ucArrayIndex - 1; ucLoopIndex >=0; ucLoopIndex--)
             {
-                lResult = (lResult * 10) + ucBinaryNumberb[ucLoopIndexb];
+                lResult = (lResult * 10) + ucBinaryNumber[ucLoopIndex];
+            }
+            break;
+        case 'r':
+            uint8_t ucIter = 0;
+            uint32_t ulr= 0;
+            for(ucIter = 0; ucIter < 32; ucIter++)
+            {
+                lResult <<=1;
+                lResult |= (sExpressionData.lOperandOne & 1);
+                sExpressionData.lOperandOne >>= 1;
             }
             break;
         default:
